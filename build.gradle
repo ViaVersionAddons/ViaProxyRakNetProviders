@@ -1,0 +1,77 @@
+plugins {
+    id "java"
+}
+
+base {
+    java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+    compileJava.options.encoding = compileTestJava.options.encoding = javadoc.options.encoding = "UTF-8"
+
+    group = project.maven_group ?: rootProject.maven_group
+    archivesName = project.maven_name ?: rootProject.maven_name
+    version = project.maven_version ?: rootProject.maven_version
+}
+
+configurations {
+    include
+
+    implementation.extendsFrom include
+    api.extendsFrom include
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "Jitpack"
+        url = "https://jitpack.io"
+    }
+    maven {
+        name = "Lenni0451"
+        url "https://maven.lenni0451.net/everything"
+    }
+    maven {
+        name = "OpenCollab Releases"
+        url = "https://repo.opencollab.dev/maven-releases/"
+    }
+    maven {
+        name = "OpenCollab Snapshots"
+        url = "https://repo.opencollab.dev/maven-snapshots/"
+    }
+    maven {
+        name = "ViaVersion"
+        url "https://repo.viaversion.com"
+    }
+    maven {
+        name = "Minecraft Libraries"
+        url "https://libraries.minecraft.net"
+    }
+}
+
+dependencies {
+    implementation "net.raphimc:ViaProxy:3.0.23-SNAPSHOT"
+
+    include "net.java.dev.jna:jna:5.13.0"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("viaproxy.yml") {
+        expand "version": project.version
+    }
+}
+
+jar {
+    dependsOn configurations.include
+    from {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        configurations.include.collect {
+            zipTree(it)
+        }
+    } {
+        exclude "META-INF/*.RSA", "META-INF/*.SF", "META-INF/*.DSA"
+    }
+
+    from("LICENSE") {
+        rename { "${it}_${project.name ?: rootProject.name}" }
+    }
+}

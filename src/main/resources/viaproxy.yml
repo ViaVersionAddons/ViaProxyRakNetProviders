@@ -1,0 +1,5 @@
+name: "RakNetProviders"
+version: "${version}"
+author: "RK_01"
+main: "net.raphimc.raknetproviders.RakNetProviders"
+min-version: "3.0.23"
