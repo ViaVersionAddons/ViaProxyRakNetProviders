@@ -20,16 +20,20 @@ package net.raphimc.raknetproviders.raknetnative;
 import com.sun.jna.Pointer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelConfig;
-import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelMetadata;
+import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.DefaultChannelConfig;
-import io.netty.channel.FileRegion;
-import io.netty.channel.oio.AbstractOioByteChannel;
+import io.netty.channel.oio.AbstractOioMessageChannel;
+import io.netty.util.internal.StringUtil;
+import org.cloudburstmc.netty.channel.raknet.packet.RakMessage;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.List;
 
-public class RakNetNativeChannel extends AbstractOioByteChannel {
+public class RakNetNativeChannel extends AbstractOioMessageChannel {
 
+    private static final ChannelMetadata METADATA = new ChannelMetadata(false);
     private final ChannelConfig config = new DefaultChannelConfig(this);
 
     private SocketAddress remoteAddress;
@@ -61,38 +65,40 @@ public class RakNetNativeChannel extends AbstractOioByteChannel {
     }
 
     @Override
-    protected int doReadBytes(ByteBuf buf) {
+    protected int doReadMessages(List<Object> list) {
         final RakNetNative.RN_Packet packet = RakNetNative.INSTANCE.RN_RakPeerReceive(this.rakPeer);
         if (packet == null) {
             return 0;
         }
-        if (packet.data.getByte(0) != (byte) 0xFE) {
-            RakNetNative.INSTANCE.RN_RakPeerDeallocatePacket(this.rakPeer, packet);
-            return 0;
-        }
-        final byte[] bytes = packet.data.getByteArray(1, packet.length - 1);
-        buf.writeBytes(bytes);
-
+        final byte[] bytes = packet.data.getByteArray(0, packet.length);
         RakNetNative.INSTANCE.RN_RakPeerDeallocatePacket(this.rakPeer, packet);
+
+        list.add(new RakMessage(this.alloc().buffer(bytes.length).writeBytes(bytes)));
 
         return bytes.length;
     }
 
     @Override
-    protected void doWriteBytes(ByteBuf buf) {
-        final byte[] bytes = new byte[buf.readableBytes()];
-        buf.readBytes(bytes);
+    protected void doWrite(ChannelOutboundBuffer channelOutboundBuffer) {
+        while (true) {
+            final Object msg = channelOutboundBuffer.current();
+            if (msg == null) {
+                return;
+            } else if (msg instanceof ByteBuf buf) {
+                final byte[] bytes = new byte[buf.readableBytes()];
+                buf.readBytes(bytes);
 
-        final RakNetNative.RN_AddressOrGUID.ByValue address = new RakNetNative.RN_AddressOrGUID.ByValue();
-        address.guid = -1;
-        if (RakNetNative.INSTANCE.RN_RakPeerSend(this.rakPeer, bytes, bytes.length, 2, 3, (byte) 0, address, true, 0) == 0) {
-            throw new RuntimeException("Failed to send packet");
+                final RakNetNative.RN_AddressOrGUID.ByValue address = new RakNetNative.RN_AddressOrGUID.ByValue();
+                address.guid = -1;
+                if (RakNetNative.INSTANCE.RN_RakPeerSend(this.rakPeer, bytes, bytes.length, 2, 3, (byte) 0, address, true, 0) == 0) {
+                    throw new RuntimeException("Failed to send packet");
+                }
+
+                channelOutboundBuffer.remove();
+            } else {
+                channelOutboundBuffer.remove(new UnsupportedOperationException("unsupported message type: " + StringUtil.simpleClassName(msg)));
+            }
         }
-    }
-
-    @Override
-    protected void doWriteFileRegion(FileRegion region) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -106,19 +112,8 @@ public class RakNetNativeChannel extends AbstractOioByteChannel {
     }
 
     @Override
-    protected int available() {
-        return 0;
-    }
-
-    @Override
     protected void doBind(SocketAddress localAddress) {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected ChannelFuture shutdownInput() {
-        this.doClose();
-        return this.newSucceededFuture();
     }
 
     @Override
@@ -141,8 +136,8 @@ public class RakNetNativeChannel extends AbstractOioByteChannel {
     }
 
     @Override
-    protected boolean isInputShutdown() {
-        return !this.open;
+    public ChannelMetadata metadata() {
+        return METADATA;
     }
 
     @Override
