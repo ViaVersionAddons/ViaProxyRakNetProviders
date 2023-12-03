@@ -4,7 +4,7 @@ This allows users to select a more compatible or performant RakNet implementatio
 Primary use case is for debugging and testing different RakNet implementations, as the default one in ViaProxy (https://github.com/CloudburstMC/Network) has many issues with some servers.
 
 ## Installation and Usage
-1. Download the latest version from the above link.
+1. Download the latest version from [GitHub Actions](https://github.com/ViaVersionAddons/ViaProxyRakNetProviders/actions).
 2. Put the jar file into the plugins folder of ViaProxy
 3. Run ViaProxy. You should now be able to select the RakNet backend in the Advanced tab.
 
