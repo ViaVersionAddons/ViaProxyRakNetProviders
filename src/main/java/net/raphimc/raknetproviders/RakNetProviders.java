@@ -23,6 +23,7 @@ import net.lenni0451.reflect.stream.RStream;
 import net.raphimc.raknetproviders.native_raknet.NativeRakNet;
 import net.raphimc.raknetproviders.native_raknet.NativeRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.relativitymc_netty_raknet.RelativityMcNettyRakNetBedrockProxyConnection;
+import net.raphimc.raknetproviders.whirvis_jraknet.WhirvisJRakNetBedrockProxyConnection;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.plugins.ViaProxyPlugin;
@@ -111,6 +112,9 @@ public class RakNetProviders extends ViaProxyPlugin {
                 }
                 case RELATIVITYMC_NETTY_RAKNET -> {
                     event.setProxySession(new RelativityMcNettyRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, RelativityMcNettyRakNetBedrockProxyConnection.class)));
+                }
+                case WHIRVIS_JRAKNET -> {
+                    event.setProxySession(new WhirvisJRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, WhirvisJRakNetBedrockProxyConnection.class)));
                 }
             }
         }

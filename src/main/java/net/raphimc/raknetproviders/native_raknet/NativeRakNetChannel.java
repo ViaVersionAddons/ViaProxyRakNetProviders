@@ -19,9 +19,10 @@ package net.raphimc.raknetproviders.native_raknet;
 
 import com.sun.jna.Pointer;
 import io.netty.buffer.ByteBuf;
-import io.netty.channel.*;
-import io.netty.channel.oio.AbstractOioMessageChannel;
+import io.netty.channel.ChannelOutboundBuffer;
+import io.netty.channel.ConnectTimeoutException;
 import io.netty.util.internal.StringUtil;
+import net.raphimc.raknetproviders.SimpleOioMessageChannel;
 import org.cloudburstmc.netty.channel.raknet.RakConstants;
 import org.cloudburstmc.netty.channel.raknet.packet.RakMessage;
 
@@ -30,27 +31,15 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
 
-public class NativeRakNetChannel extends AbstractOioMessageChannel {
+public class NativeRakNetChannel extends SimpleOioMessageChannel {
 
-    private static final ChannelMetadata METADATA = new ChannelMetadata(false);
-    private final ChannelConfig config = new DefaultChannelConfig(this);
-
-    private SocketAddress remoteAddress;
-    private SocketAddress localAddress;
+    protected boolean active = false;
 
     private Pointer rakPeer;
 
-    private boolean open = true;
-    private boolean active = false;
-
-    public NativeRakNetChannel() {
-        super(null);
-    }
-
     @Override
-    protected void doConnect(SocketAddress remoteAddress, SocketAddress localAddress) throws InterruptedException, ConnectException {
-        this.remoteAddress = remoteAddress;
-        this.localAddress = localAddress;
+    protected void doConnect(SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
+        super.doConnect(remoteAddress, localAddress);
 
         this.rakPeer = NativeRakNet.INSTANCE.RN_RakPeerGetInstance();
         if (NativeRakNet.INSTANCE.RN_RakPeerStartup(this.rakPeer, 1, new NativeRakNet.RN_SocketDescriptor[]{new NativeRakNet.RN_SocketDescriptor((short) 0, "0.0.0.0", (short) 2, (short) 0, 0, false, 0)}, 1, -99999) != 0) {
@@ -125,47 +114,12 @@ public class NativeRakNetChannel extends AbstractOioMessageChannel {
     }
 
     @Override
-    protected SocketAddress localAddress0() {
-        return this.localAddress;
-    }
-
-    @Override
-    protected SocketAddress remoteAddress0() {
-        return this.remoteAddress;
-    }
-
-    @Override
-    protected void doBind(SocketAddress localAddress) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected void doDisconnect() {
-        this.doClose();
-    }
-
-    @Override
-    protected void doClose() {
-        this.open = false;
+    protected void doClose() throws Exception {
+        super.doClose();
 
         NativeRakNet.INSTANCE.RN_RakPeerShutdown(this.rakPeer, 500, 0, 2);
         NativeRakNet.INSTANCE.RN_RakPeerDestroyInstance(this.rakPeer);
         this.rakPeer = null;
-    }
-
-    @Override
-    public ChannelConfig config() {
-        return this.config;
-    }
-
-    @Override
-    public ChannelMetadata metadata() {
-        return METADATA;
-    }
-
-    @Override
-    public boolean isOpen() {
-        return this.open;
     }
 
     @Override

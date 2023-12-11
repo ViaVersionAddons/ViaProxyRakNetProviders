@@ -53,6 +53,10 @@ dependencies {
 
     // For dependency sources, see RakNetBackend class
     include "com.github.RelativityMC.netty-raknet:netty-raknet-client:ae1f415e05"
+    include("com.github.telecran-telecrit:JRakNet:d757e139ce") {
+        exclude group: "org.apache.logging.log4j"
+        exclude group: "io.netty"
+    }
 }
 
 processResources {
