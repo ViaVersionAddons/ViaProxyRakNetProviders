@@ -19,8 +19,10 @@ package net.raphimc.raknetproviders;
 
 public enum RakNetBackend {
 
-    CLOUDBURST("Cloudburst Network (default)"),
-    NATIVE("Native RakNet (best)");
+    NATIVE_RAKNET("Native RakNet (best)"), // https://github.com/extremeheat/fb-raknet
+    CLOUDBURSTMC_NETWORK("CloudburstMC/Network (default)"), // https://github.com/CloudburstMC/Network
+    RELATIVITYMC_NETTY_RAKNET("RelativityMC/netty-raknet"), // https://github.com/RelativityMC/netty-raknet
+    ;
 
     private final String displayName;
 

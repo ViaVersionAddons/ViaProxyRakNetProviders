@@ -20,8 +20,9 @@ package net.raphimc.raknetproviders;
 import net.lenni0451.lambdaevents.EventHandler;
 import net.lenni0451.reflect.Objects;
 import net.lenni0451.reflect.stream.RStream;
-import net.raphimc.raknetproviders.raknetnative.RakNetNative;
-import net.raphimc.raknetproviders.raknetnative.RakNetNativeBedrockProxyConnection;
+import net.raphimc.raknetproviders.native_raknet.NativeRakNet;
+import net.raphimc.raknetproviders.native_raknet.NativeRakNetBedrockProxyConnection;
+import net.raphimc.raknetproviders.relativitymc_netty_raknet.RelativityMcNettyRakNetBedrockProxyConnection;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.plugins.ViaProxyPlugin;
@@ -47,8 +48,8 @@ public class RakNetProviders extends ViaProxyPlugin {
     public void onEnable() {
         ViaProxy.EVENT_MANAGER.register(this);
 
-        if (RakNetNative.isLoaded()) {
-            RakNetNative.INSTANCE.RN_SetRakNetProtocolVersion(ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION);
+        if (NativeRakNet.isLoaded()) {
+            NativeRakNet.INSTANCE.RN_SetRakNetProtocolVersion(ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION);
         }
     }
 
@@ -61,9 +62,8 @@ public class RakNetProviders extends ViaProxyPlugin {
         final ViaProxyUI ui = ViaProxy.getUI();
 
         ui.eventManager.register(() -> {
-            if (this.rakNetBackend.getSelectedItem() instanceof RakNetBackend backend) {
-                ViaProxy.getSaveManager().uiSave.put("rakNetBackend", backend.name());
-            }
+            ViaProxy.getSaveManager().uiSave.put("rakNetBackend", String.valueOf(this.rakNetBackend.getSelectedIndex()));
+            ViaProxy.getSaveManager().save();
         }, UICloseEvent.class);
 
         final JPanel advancedTabPanel = RStream.of(ui.advancedTab).withSuper().fields().by("contentPane").get();
@@ -99,15 +99,18 @@ public class RakNetProviders extends ViaProxyPlugin {
     public void onProxySessionCreation(final ProxySessionCreationEvent event) {
         if (event.getProxySession() instanceof BedrockProxyConnection bedrockProxyConnection && this.rakNetBackend.getSelectedItem() instanceof RakNetBackend backend) {
             switch (backend) {
-                case CLOUDBURST -> {
-                    // it's already set to CloudNet by default
-                }
-                case NATIVE -> {
-                    if (RakNetNative.isLoaded()) {
-                        event.setProxySession(new RakNetNativeBedrockProxyConnection(Objects.cast(bedrockProxyConnection, RakNetNativeBedrockProxyConnection.class)));
+                case NATIVE_RAKNET -> {
+                    if (NativeRakNet.isLoaded()) {
+                        event.setProxySession(new NativeRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, NativeRakNetBedrockProxyConnection.class)));
                     } else {
-                        Logger.LOGGER.warn("RakNetNative is not supported on this system, falling back to " + RakNetBackend.CLOUDBURST.getDisplayName());
+                        Logger.LOGGER.warn("NATIVE_RAKNET is not supported on this system, falling back to CLOUDBURST_NETWORK");
                     }
+                }
+                case CLOUDBURSTMC_NETWORK -> {
+                    // default implementation
+                }
+                case RELATIVITYMC_NETTY_RAKNET -> {
+                    event.setProxySession(new RelativityMcNettyRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, RelativityMcNettyRakNetBedrockProxyConnection.class)));
                 }
             }
         }

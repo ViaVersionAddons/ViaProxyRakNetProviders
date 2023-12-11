@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.raknetnative;
+package net.raphimc.raknetproviders.native_raknet;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -25,13 +25,13 @@ import com.sun.jna.Structure;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public interface RakNetNative extends Library {
+public interface NativeRakNet extends Library {
 
-    RakNetNative INSTANCE = loadNative();
+    NativeRakNet INSTANCE = loadNative();
 
-    private static RakNetNative loadNative() {
+    private static NativeRakNet loadNative() {
         try {
-            return Native.load("raknet", RakNetNative.class);
+            return Native.load("raknet", NativeRakNet.class);
         } catch (Throwable ignored) {
         }
         return null;
@@ -71,11 +71,9 @@ public interface RakNetNative extends Library {
         public int extraSocketOptions;
 
         public RN_SocketDescriptor() {
-            super();
         }
 
         public RN_SocketDescriptor(final short port, final String hostAddress, final short socketFamily, final short remotePortRakNetWasStartedOn_PS3, final int chromeInstance, final boolean blockingSocket, final int extraSocketOptions) {
-            super();
             this.port = port;
             this.hostAddress = Arrays.copyOf(hostAddress.getBytes(StandardCharsets.US_ASCII), 32);
             this.socketFamily = socketFamily;
@@ -107,11 +105,9 @@ public interface RakNetNative extends Library {
         public byte[] padding = new byte[20];
 
         public RN_AddressOrGUID() {
-            super();
         }
 
         public RN_AddressOrGUID(final long guid, final short systemIndex) {
-            super();
             this.guid = guid;
             this.systemIndex = systemIndex;
         }
