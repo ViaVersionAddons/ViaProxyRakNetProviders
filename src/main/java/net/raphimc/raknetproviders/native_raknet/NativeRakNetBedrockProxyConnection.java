@@ -21,6 +21,7 @@ import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.oio.OioEventLoopGroup;
 import net.raphimc.netminecraft.constants.ConnectionState;
+import net.raphimc.netminecraft.util.ChannelType;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 
@@ -31,7 +32,7 @@ public class NativeRakNetBedrockProxyConnection extends BedrockProxyConnection {
     }
 
     @Override
-    public void initialize(Bootstrap bootstrap) {
+    public void initialize(ChannelType channelType, Bootstrap bootstrap) {
         if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
             bootstrap
                     .group(new OioEventLoopGroup())
@@ -42,7 +43,7 @@ public class NativeRakNetBedrockProxyConnection extends BedrockProxyConnection {
 
             this.channelFuture = bootstrap.register().syncUninterruptibly();
         } else {
-            super.initialize(bootstrap);
+            super.initialize(channelType, bootstrap);
         }
     }
 
