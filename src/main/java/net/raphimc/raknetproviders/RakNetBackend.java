@@ -23,6 +23,7 @@ public enum RakNetBackend {
     CLOUDBURSTMC_NETWORK("CloudburstMC/Network (default)"), // https://github.com/CloudburstMC/Network
     RELATIVITYMC_NETTY_RAKNET("RelativityMC/netty-raknet"), // https://github.com/RelativityMC/netty-raknet
     WHIRVIS_JRAKNET("whirvis/JRakNet (bad)"), // https://github.com/telecran-telecrit/JRakNet
+    GO_RAKNET("Sandertv/go-raknet (good)"), // https://github.com/Sandertv/go-raknet
     ;
 
     private final String displayName;

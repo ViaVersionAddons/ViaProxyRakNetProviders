@@ -79,10 +79,15 @@ public class NativeRakNetChannel extends SimpleOioMessageChannel {
 
     @Override
     protected int doReadMessages(List<Object> list) {
+        if (this.rakPeer == null) {
+            return -1;
+        }
+
         final NativeRakNet.RN_Packet packet = NativeRakNet.INSTANCE.RN_RakPeerReceive(this.rakPeer);
         if (packet == null) {
             return 0;
         }
+
         final byte[] bytes = packet.data.getByteArray(0, packet.length);
         NativeRakNet.INSTANCE.RN_RakPeerDeallocatePacket(this.rakPeer, packet);
         list.add(new RakMessage(this.alloc().buffer(bytes.length).writeBytes(bytes)));

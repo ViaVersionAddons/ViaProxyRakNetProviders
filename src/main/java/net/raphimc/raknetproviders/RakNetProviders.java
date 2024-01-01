@@ -20,6 +20,8 @@ package net.raphimc.raknetproviders;
 import net.lenni0451.lambdaevents.EventHandler;
 import net.lenni0451.reflect.Objects;
 import net.lenni0451.reflect.stream.RStream;
+import net.raphimc.raknetproviders.go_raknet.GoRakNet;
+import net.raphimc.raknetproviders.go_raknet.GoRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.native_raknet.NativeRakNet;
 import net.raphimc.raknetproviders.native_raknet.NativeRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.relativitymc_netty_raknet.RelativityMcNettyRakNetBedrockProxyConnection;
@@ -115,6 +117,13 @@ public class RakNetProviders extends ViaProxyPlugin {
                 }
                 case WHIRVIS_JRAKNET -> {
                     event.setProxySession(new WhirvisJRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, WhirvisJRakNetBedrockProxyConnection.class)));
+                }
+                case GO_RAKNET -> {
+                    if (GoRakNet.isLoaded()) {
+                        event.setProxySession(new GoRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, GoRakNetBedrockProxyConnection.class)));
+                    } else {
+                        Logger.LOGGER.warn("GO_RAKNET is not supported on this system, falling back to CLOUDBURST_NETWORK");
+                    }
                 }
             }
         }
