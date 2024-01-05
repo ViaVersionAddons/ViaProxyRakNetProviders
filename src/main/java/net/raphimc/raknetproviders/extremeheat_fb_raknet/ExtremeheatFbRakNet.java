@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.native_raknet;
+package net.raphimc.raknetproviders.extremeheat_fb_raknet;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -25,13 +25,13 @@ import com.sun.jna.Structure;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public interface NativeRakNet extends Library {
+public interface ExtremeheatFbRakNet extends Library {
 
-    NativeRakNet INSTANCE = loadNative();
+    ExtremeheatFbRakNet INSTANCE = loadNative();
 
-    private static NativeRakNet loadNative() {
+    private static ExtremeheatFbRakNet loadNative() {
         try {
-            return Native.load("raknet", NativeRakNet.class);
+            return Native.load("cpp-raknet", ExtremeheatFbRakNet.class);
         } catch (Throwable ignored) {
         }
         return null;

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.go_raknet;
+package net.raphimc.raknetproviders.sandertv_go_raknet;
 
 import com.sun.jna.Library;
 import com.sun.jna.Native;
@@ -26,15 +26,15 @@ import com.sun.jna.ptr.PointerByReference;
 import java.util.HashMap;
 import java.util.Map;
 
-public interface GoRakNet extends Library {
+public interface SanderTvGoRakNet extends Library {
 
-    GoRakNet INSTANCE = loadNative();
+    SanderTvGoRakNet INSTANCE = loadNative();
 
-    private static GoRakNet loadNative() {
+    private static SanderTvGoRakNet loadNative() {
         try {
             final Map<String, Object> options = new HashMap<>();
             options.put(Library.OPTION_STRING_ENCODING, "UTF-8");
-            return Native.load("go-raknet", GoRakNet.class, options);
+            return Native.load("go-raknet", SanderTvGoRakNet.class, options);
         } catch (Throwable ignored) {
         }
         return null;

@@ -20,11 +20,13 @@ package net.raphimc.raknetproviders;
 import net.lenni0451.lambdaevents.EventHandler;
 import net.lenni0451.reflect.Objects;
 import net.lenni0451.reflect.stream.RStream;
-import net.raphimc.raknetproviders.go_raknet.GoRakNet;
-import net.raphimc.raknetproviders.go_raknet.GoRakNetBedrockProxyConnection;
-import net.raphimc.raknetproviders.native_raknet.NativeRakNet;
-import net.raphimc.raknetproviders.native_raknet.NativeRakNetBedrockProxyConnection;
+import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNet;
+import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNetBedrockProxyConnection;
+import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNet;
+import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.relativitymc_netty_raknet.RelativityMcNettyRakNetBedrockProxyConnection;
+import net.raphimc.raknetproviders.sandertv_go_raknet.SanderTvGoRakNet;
+import net.raphimc.raknetproviders.sandertv_go_raknet.SanderTvGoRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.whirvis_jraknet.WhirvisJRakNetBedrockProxyConnection;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viaproxy.ViaProxy;
@@ -51,8 +53,8 @@ public class RakNetProviders extends ViaProxyPlugin {
     public void onEnable() {
         ViaProxy.EVENT_MANAGER.register(this);
 
-        if (NativeRakNet.isLoaded()) {
-            NativeRakNet.INSTANCE.RN_SetRakNetProtocolVersion(ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION);
+        if (ExtremeheatFbRakNet.isLoaded()) {
+            ExtremeheatFbRakNet.INSTANCE.RN_SetRakNetProtocolVersion(ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION);
         }
     }
 
@@ -102,11 +104,11 @@ public class RakNetProviders extends ViaProxyPlugin {
     public void onProxySessionCreation(final ProxySessionCreationEvent event) {
         if (event.getProxySession() instanceof BedrockProxyConnection bedrockProxyConnection && this.rakNetBackend.getSelectedItem() instanceof RakNetBackend backend) {
             switch (backend) {
-                case NATIVE_RAKNET -> {
-                    if (NativeRakNet.isLoaded()) {
-                        event.setProxySession(new NativeRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, NativeRakNetBedrockProxyConnection.class)));
+                case EXTREMEHEAT_FB_RAKNET -> {
+                    if (ExtremeheatFbRakNet.isLoaded()) {
+                        event.setProxySession(new ExtremeheatFbRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, ExtremeheatFbRakNetBedrockProxyConnection.class)));
                     } else {
-                        Logger.LOGGER.warn("NATIVE_RAKNET is not supported on this system, falling back to CLOUDBURST_NETWORK");
+                        Logger.LOGGER.warn("EXTREMEHEAT_FB_RAKNET is not supported on this system, falling back to CLOUDBURST_NETWORK");
                     }
                 }
                 case CLOUDBURSTMC_NETWORK -> {
@@ -118,11 +120,18 @@ public class RakNetProviders extends ViaProxyPlugin {
                 case WHIRVIS_JRAKNET -> {
                     event.setProxySession(new WhirvisJRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, WhirvisJRakNetBedrockProxyConnection.class)));
                 }
-                case GO_RAKNET -> {
-                    if (GoRakNet.isLoaded()) {
-                        event.setProxySession(new GoRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, GoRakNetBedrockProxyConnection.class)));
+                case SANDERTV_GO_RAKNET -> {
+                    if (SanderTvGoRakNet.isLoaded()) {
+                        event.setProxySession(new SanderTvGoRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, SanderTvGoRakNetBedrockProxyConnection.class)));
                     } else {
-                        Logger.LOGGER.warn("GO_RAKNET is not supported on this system, falling back to CLOUDBURST_NETWORK");
+                        Logger.LOGGER.warn("SANDERTV_GO_RAKNET is not supported on this system, falling back to CLOUDBURST_NETWORK");
+                    }
+                }
+                case B23R0_RUST_RAKNET -> {
+                    if (B23R0RustRakNet.isLoaded()) {
+                        event.setProxySession(new B23R0RustRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, B23R0RustRakNetBedrockProxyConnection.class)));
+                    } else {
+                        Logger.LOGGER.warn("B23R0_RUST_RAKNET is not supported on this system, falling back to CLOUDBURST_NETWORK");
                     }
                 }
             }

@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.native_raknet;
+package net.raphimc.raknetproviders.extremeheat_fb_raknet;
 
 import com.sun.jna.Pointer;
 import io.netty.buffer.ByteBuf;
@@ -31,7 +31,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
 
-public class NativeRakNetChannel extends SimpleOioMessageChannel {
+public class ExtremeheatFbRakNetChannel extends SimpleOioMessageChannel {
 
     protected boolean active = false;
 
@@ -41,18 +41,18 @@ public class NativeRakNetChannel extends SimpleOioMessageChannel {
     protected void doConnect(SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
         super.doConnect(remoteAddress, localAddress);
 
-        this.rakPeer = NativeRakNet.INSTANCE.RN_RakPeerGetInstance();
-        if (NativeRakNet.INSTANCE.RN_RakPeerStartup(this.rakPeer, 1, new NativeRakNet.RN_SocketDescriptor[]{new NativeRakNet.RN_SocketDescriptor((short) 0, "0.0.0.0", (short) 2, (short) 0, 0, false, 0)}, 1, -99999) != 0) {
+        this.rakPeer = ExtremeheatFbRakNet.INSTANCE.RN_RakPeerGetInstance();
+        if (ExtremeheatFbRakNet.INSTANCE.RN_RakPeerStartup(this.rakPeer, 1, new ExtremeheatFbRakNet.RN_SocketDescriptor[]{new ExtremeheatFbRakNet.RN_SocketDescriptor((short) 0, "0.0.0.0", (short) 2, (short) 0, 0, false, 0)}, 1, -99999) != 0) {
             throw new ConnectException("Failed to start RakPeer");
         }
-        if (NativeRakNet.INSTANCE.RN_RakPeerConnect(this.rakPeer, ((InetSocketAddress) remoteAddress).getHostString(), (short) ((InetSocketAddress) remoteAddress).getPort(), null, 0, null, 0, 12, 500, 0) != 0) {
+        if (ExtremeheatFbRakNet.INSTANCE.RN_RakPeerConnect(this.rakPeer, ((InetSocketAddress) remoteAddress).getHostString(), (short) ((InetSocketAddress) remoteAddress).getPort(), null, 0, null, 0, 12, 500, 0) != 0) {
             throw new ConnectException("Failed to connect to server");
         }
 
         final long start = System.currentTimeMillis();
         final long timeout = this.config().getConnectTimeoutMillis();
         while (System.currentTimeMillis() - start < timeout) {
-            final NativeRakNet.RN_Packet packet = NativeRakNet.INSTANCE.RN_RakPeerReceive(this.rakPeer);
+            final ExtremeheatFbRakNet.RN_Packet packet = ExtremeheatFbRakNet.INSTANCE.RN_RakPeerReceive(this.rakPeer);
             if (packet == null) {
                 Thread.sleep(50);
                 continue;
@@ -68,7 +68,7 @@ public class NativeRakNetChannel extends SimpleOioMessageChannel {
                     throw new ConnectException("Received unexpected packet while connecting: " + packetId);
                 }
             } finally {
-                NativeRakNet.INSTANCE.RN_RakPeerDeallocatePacket(this.rakPeer, packet);
+                ExtremeheatFbRakNet.INSTANCE.RN_RakPeerDeallocatePacket(this.rakPeer, packet);
             }
         }
 
@@ -83,13 +83,13 @@ public class NativeRakNetChannel extends SimpleOioMessageChannel {
             return -1;
         }
 
-        final NativeRakNet.RN_Packet packet = NativeRakNet.INSTANCE.RN_RakPeerReceive(this.rakPeer);
+        final ExtremeheatFbRakNet.RN_Packet packet = ExtremeheatFbRakNet.INSTANCE.RN_RakPeerReceive(this.rakPeer);
         if (packet == null) {
             return 0;
         }
 
         final byte[] bytes = packet.data.getByteArray(0, packet.length);
-        NativeRakNet.INSTANCE.RN_RakPeerDeallocatePacket(this.rakPeer, packet);
+        ExtremeheatFbRakNet.INSTANCE.RN_RakPeerDeallocatePacket(this.rakPeer, packet);
         list.add(new RakMessage(this.alloc().buffer(bytes.length).writeBytes(bytes)));
         return bytes.length;
     }
@@ -105,9 +105,9 @@ public class NativeRakNetChannel extends SimpleOioMessageChannel {
                 final byte[] bytes = new byte[buf.readableBytes()];
                 buf.readBytes(bytes);
 
-                final NativeRakNet.RN_AddressOrGUID.ByValue address = new NativeRakNet.RN_AddressOrGUID.ByValue();
+                final ExtremeheatFbRakNet.RN_AddressOrGUID.ByValue address = new ExtremeheatFbRakNet.RN_AddressOrGUID.ByValue();
                 address.guid = -1;
-                if (NativeRakNet.INSTANCE.RN_RakPeerSend(this.rakPeer, bytes, bytes.length, rakMessage.priority().ordinal(), rakMessage.reliability().ordinal(), (byte) rakMessage.channel(), address, true, 0) == 0) {
+                if (ExtremeheatFbRakNet.INSTANCE.RN_RakPeerSend(this.rakPeer, bytes, bytes.length, rakMessage.priority().ordinal(), rakMessage.reliability().ordinal(), (byte) rakMessage.channel(), address, true, 0) == 0) {
                     throw new RuntimeException("Failed to send packet");
                 }
 
@@ -122,8 +122,8 @@ public class NativeRakNetChannel extends SimpleOioMessageChannel {
     protected void doClose() throws Exception {
         super.doClose();
 
-        NativeRakNet.INSTANCE.RN_RakPeerShutdown(this.rakPeer, 500, 0, 2);
-        NativeRakNet.INSTANCE.RN_RakPeerDestroyInstance(this.rakPeer);
+        ExtremeheatFbRakNet.INSTANCE.RN_RakPeerShutdown(this.rakPeer, 500, 0, 2);
+        ExtremeheatFbRakNet.INSTANCE.RN_RakPeerDestroyInstance(this.rakPeer);
         this.rakPeer = null;
     }
 

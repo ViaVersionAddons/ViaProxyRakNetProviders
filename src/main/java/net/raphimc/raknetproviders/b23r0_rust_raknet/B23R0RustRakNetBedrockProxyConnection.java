@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.native_raknet;
+package net.raphimc.raknetproviders.b23r0_rust_raknet;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelOption;
@@ -25,9 +25,9 @@ import net.raphimc.netminecraft.util.ChannelType;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 
-public class NativeRakNetBedrockProxyConnection extends BedrockProxyConnection {
+public class B23R0RustRakNetBedrockProxyConnection extends BedrockProxyConnection {
 
-    public NativeRakNetBedrockProxyConnection(final NativeRakNetBedrockProxyConnection bedrockProxyConnection) {
+    public B23R0RustRakNetBedrockProxyConnection(final B23R0RustRakNetBedrockProxyConnection bedrockProxyConnection) {
         super(bedrockProxyConnection.handlerSupplier, bedrockProxyConnection.channelInitializerSupplier, bedrockProxyConnection.getC2P());
     }
 
@@ -36,7 +36,7 @@ public class NativeRakNetBedrockProxyConnection extends BedrockProxyConnection {
         if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
             bootstrap
                     .group(new OioEventLoopGroup())
-                    .channel(NativeRakNetChannel.class)
+                    .channel(B23R0RustRakNetChannel.class)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4_000)
                     .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
                     .handler(this.channelInitializerSupplier.apply(this.handlerSupplier));

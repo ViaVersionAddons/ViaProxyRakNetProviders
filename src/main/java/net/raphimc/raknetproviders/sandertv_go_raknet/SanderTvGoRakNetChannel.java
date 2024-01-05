@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.go_raknet;
+package net.raphimc.raknetproviders.sandertv_go_raknet;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
@@ -31,7 +31,7 @@ import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 import java.util.List;
 
-public class GoRakNetChannel extends SimpleOioMessageChannel {
+public class SanderTvGoRakNetChannel extends SimpleOioMessageChannel {
 
     protected boolean active = false;
 
@@ -43,7 +43,7 @@ public class GoRakNetChannel extends SimpleOioMessageChannel {
 
         final InetSocketAddress address = (InetSocketAddress) remoteAddress;
         final PointerByReference connectionPointer = new PointerByReference();
-        final String connectError = GoRakNet.INSTANCE.connect(address.getHostString() + ":" + address.getPort(), this.config().getConnectTimeoutMillis(), connectionPointer);
+        final String connectError = SanderTvGoRakNet.INSTANCE.connect(address.getHostString() + ":" + address.getPort(), this.config().getConnectTimeoutMillis(), connectionPointer);
         if (connectError != null) {
             throw new ConnectException(connectError);
         }
@@ -60,7 +60,7 @@ public class GoRakNetChannel extends SimpleOioMessageChannel {
 
         final PointerByReference dataPointer = new PointerByReference();
         final IntByReference lengthPointer = new IntByReference();
-        final String readError = GoRakNet.INSTANCE.receivePacket(this.connection, dataPointer, lengthPointer);
+        final String readError = SanderTvGoRakNet.INSTANCE.receivePacket(this.connection, dataPointer, lengthPointer);
         if (readError != null) {
             throw new RuntimeException(readError);
         }
@@ -84,7 +84,7 @@ public class GoRakNetChannel extends SimpleOioMessageChannel {
                 final byte[] bytes = new byte[buf.readableBytes()];
                 buf.readBytes(bytes);
 
-                final String writeError = GoRakNet.INSTANCE.sendPacket(this.connection, bytes, bytes.length);
+                final String writeError = SanderTvGoRakNet.INSTANCE.sendPacket(this.connection, bytes, bytes.length);
                 if (writeError != null) {
                     throw new RuntimeException(writeError);
                 }
@@ -101,7 +101,7 @@ public class GoRakNetChannel extends SimpleOioMessageChannel {
         super.doClose();
 
         if (this.connection != null) {
-            final String disconnectError = GoRakNet.INSTANCE.disconnect(this.connection);
+            final String disconnectError = SanderTvGoRakNet.INSTANCE.disconnect(this.connection);
             this.connection = null;
             if (disconnectError != null) {
                 throw new RuntimeException(disconnectError);

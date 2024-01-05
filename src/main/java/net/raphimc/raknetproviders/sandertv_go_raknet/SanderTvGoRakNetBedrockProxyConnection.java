@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.go_raknet;
+package net.raphimc.raknetproviders.sandertv_go_raknet;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelOption;
@@ -25,9 +25,9 @@ import net.raphimc.netminecraft.util.ChannelType;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 
-public class GoRakNetBedrockProxyConnection extends BedrockProxyConnection {
+public class SanderTvGoRakNetBedrockProxyConnection extends BedrockProxyConnection {
 
-    public GoRakNetBedrockProxyConnection(final GoRakNetBedrockProxyConnection bedrockProxyConnection) {
+    public SanderTvGoRakNetBedrockProxyConnection(final SanderTvGoRakNetBedrockProxyConnection bedrockProxyConnection) {
         super(bedrockProxyConnection.handlerSupplier, bedrockProxyConnection.channelInitializerSupplier, bedrockProxyConnection.getC2P());
     }
 
@@ -36,7 +36,7 @@ public class GoRakNetBedrockProxyConnection extends BedrockProxyConnection {
         if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
             bootstrap
                     .group(new OioEventLoopGroup())
-                    .channel(GoRakNetChannel.class)
+                    .channel(SanderTvGoRakNetChannel.class)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4_000)
                     .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
                     .handler(this.channelInitializerSupplier.apply(this.handlerSupplier));
