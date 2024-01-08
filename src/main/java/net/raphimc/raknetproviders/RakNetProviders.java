@@ -17,6 +17,7 @@
  */
 package net.raphimc.raknetproviders;
 
+import net.lenni0451.commons.swing.GBC;
 import net.lenni0451.lambdaevents.EventHandler;
 import net.lenni0451.reflect.Objects;
 import net.lenni0451.reflect.stream.RStream;
@@ -36,7 +37,6 @@ import net.raphimc.viaproxy.plugins.events.ViaProxyLoadedEvent;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.ui.ViaProxyUI;
 import net.raphimc.viaproxy.ui.events.UICloseEvent;
-import net.raphimc.viaproxy.util.GBC;
 import net.raphimc.viaproxy.util.logging.Logger;
 
 import javax.swing.*;
