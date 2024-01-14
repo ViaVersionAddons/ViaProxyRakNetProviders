@@ -3,6 +3,8 @@
 This allows users to select a more compatible or performant RakNet implementation depending on the server they are connecting to.
 Primary use case is for debugging and testing different RakNet implementations, as the default one in ViaProxy (https://github.com/CloudburstMC/Network) has many issues with some servers.
 
+Source code for the wrapper natives can be found here: https://github.com/Lenni0451/RakNetWrapper
+
 ## Installation and Usage
 1. Download the latest version from [GitHub Actions](https://github.com/ViaVersionAddons/ViaProxyRakNetProviders/actions).
 2. Put the jar file into the plugins folder of ViaProxy
