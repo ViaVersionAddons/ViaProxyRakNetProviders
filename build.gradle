@@ -47,7 +47,7 @@ repositories {
 }
 
 dependencies {
-    implementation "net.raphimc:ViaProxy:3.1.1-SNAPSHOT"
+    implementation "net.raphimc:ViaProxy:3.2.1-SNAPSHOT"
 
     include "net.java.dev.jna:jna:5.13.0"
 

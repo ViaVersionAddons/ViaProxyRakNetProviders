@@ -35,15 +35,15 @@ import net.raphimc.viaproxy.plugins.ViaProxyPlugin;
 import net.raphimc.viaproxy.plugins.events.ProxySessionCreationEvent;
 import net.raphimc.viaproxy.plugins.events.ViaProxyLoadedEvent;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
-import net.raphimc.viaproxy.ui.ViaProxyUI;
+import net.raphimc.viaproxy.ui.ViaProxyWindow;
 import net.raphimc.viaproxy.ui.events.UICloseEvent;
 import net.raphimc.viaproxy.util.logging.Logger;
 
 import javax.swing.*;
 import java.awt.*;
 
-import static net.raphimc.viaproxy.ui.ViaProxyUI.BODY_BLOCK_PADDING;
-import static net.raphimc.viaproxy.ui.ViaProxyUI.BORDER_PADDING;
+import static net.raphimc.viaproxy.ui.ViaProxyWindow.BODY_BLOCK_PADDING;
+import static net.raphimc.viaproxy.ui.ViaProxyWindow.BORDER_PADDING;
 
 public class RakNetProviders extends ViaProxyPlugin {
 
@@ -60,15 +60,14 @@ public class RakNetProviders extends ViaProxyPlugin {
 
     @EventHandler
     public void onViaProxyLoaded(final ViaProxyLoadedEvent event) {
-        if (ViaProxy.getUI() == null) {
+        if (ViaProxy.getViaProxyWindow() == null) {
             Logger.LOGGER.warn("ViaProxy UI is not available, RakNetProviders will do nothing!");
             return;
         }
-        final ViaProxyUI ui = ViaProxy.getUI();
+        final ViaProxyWindow ui = ViaProxy.getViaProxyWindow();
 
         ui.eventManager.register(() -> {
             ViaProxy.getSaveManager().uiSave.put("rakNetBackend", String.valueOf(this.rakNetBackend.getSelectedIndex()));
-            ViaProxy.getSaveManager().save();
         }, UICloseEvent.class);
 
         final JPanel advancedTabPanel = RStream.of(ui.advancedTab).withSuper().fields().by("contentPane").get();
