@@ -94,7 +94,7 @@ public class RakNetProviders extends ViaProxyPlugin {
 
             final JPanel swingFixPanel = new JPanel(new BorderLayout());
             swingFixPanel.add(rakNetBackendPanel, BorderLayout.NORTH);
-            GBC.create(body).grid(0, 4).insets(BODY_BLOCK_PADDING, BORDER_PADDING, 0, BORDER_PADDING).height(4).anchor(GridBagConstraints.NORTHEAST).add(swingFixPanel);
+            GBC.create(body).grid(0, 5).insets(BODY_BLOCK_PADDING, BORDER_PADDING, 0, BORDER_PADDING).height(4).fill(GBC.HORIZONTAL).add(swingFixPanel);
         }
     }
 
