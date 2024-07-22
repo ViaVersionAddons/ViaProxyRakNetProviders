@@ -53,7 +53,6 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
                     .group(channelType.clientEventLoopGroup().get())
                     .channel(RakNetClient.THREADED_CHANNEL)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4_000)
-                    .option(ChannelOption.IP_TOS, 0x18)
                     .option(RakNet.PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
                     .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
                     .handler(new ChannelInitializer<>() {
