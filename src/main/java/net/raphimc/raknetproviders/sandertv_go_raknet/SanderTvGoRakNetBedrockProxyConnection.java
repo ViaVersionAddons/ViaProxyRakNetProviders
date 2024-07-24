@@ -22,6 +22,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.oio.OioEventLoopGroup;
 import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.ChannelType;
+import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 
@@ -37,7 +38,7 @@ public class SanderTvGoRakNetBedrockProxyConnection extends BedrockProxyConnecti
             bootstrap
                     .group(new OioEventLoopGroup())
                     .channel(SanderTvGoRakNetChannel.class)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4_000)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
                     .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
                     .handler(this.channelInitializerSupplier.apply(this.handlerSupplier));
 

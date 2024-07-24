@@ -27,6 +27,7 @@ import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.ChannelType;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.vialoader.netty.VLPipeline;
+import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 import network.ycc.raknet.RakNet;
@@ -52,7 +53,7 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
             bootstrap
                     .group(channelType.clientEventLoopGroup().get())
                     .channel(RakNetClient.THREADED_CHANNEL)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 4_000)
+                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
                     .option(RakNet.PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
                     .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
                     .handler(new ChannelInitializer<>() {
