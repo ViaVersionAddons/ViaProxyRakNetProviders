@@ -21,12 +21,17 @@ configurations {
 repositories {
     mavenCentral()
     maven {
-        name = "Jitpack"
-        url = "https://jitpack.io"
-    }
-    maven {
         name = "ViaVersion"
         url = "https://repo.viaversion.com"
+    }
+    maven {
+        name = "Jitpack"
+        url = "https://jitpack.io"
+
+        content {
+            includeGroup "com.github.RelativityMC"
+            includeGroup "com.github.telecran-telecrit"
+        }
     }
 }
 
