@@ -38,7 +38,7 @@ repositories {
 dependencies {
     implementation "net.raphimc:ViaProxy:3.3.2-SNAPSHOT"
 
-    include "net.java.dev.jna:jna:5.13.0"
+    include "net.java.dev.jna:jna:5.15.0"
 
     // For dependency sources, see RakNetBackend class
     include "com.github.RelativityMC.netty-raknet:netty-raknet-client:ae1f415e05"
