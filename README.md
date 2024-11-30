@@ -6,7 +6,7 @@ Primary use case is for debugging and testing different RakNet implementations, 
 Source code for the wrapper natives can be found here: https://github.com/Lenni0451/RakNetWrapper
 
 ## Installation and Usage
-1. Download the latest version from [GitHub Actions](https://github.com/ViaVersionAddons/ViaProxyRakNetProviders/actions).
+1. Download the latest version from [GitHub Actions](https://github.com/ViaVersionAddons/ViaProxyRakNetProviders/actions/workflows/build.yml).
 2. Put the jar file into the plugins folder of ViaProxy
 3. Run ViaProxy. You should now be able to select the RakNet backend in the Advanced tab.
 
