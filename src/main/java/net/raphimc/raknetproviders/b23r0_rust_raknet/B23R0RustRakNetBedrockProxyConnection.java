@@ -29,7 +29,7 @@ import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 public class B23R0RustRakNetBedrockProxyConnection extends BedrockProxyConnection {
 
     public B23R0RustRakNetBedrockProxyConnection(final B23R0RustRakNetBedrockProxyConnection bedrockProxyConnection) {
-        super(bedrockProxyConnection.handlerSupplier, bedrockProxyConnection.channelInitializerSupplier, bedrockProxyConnection.getC2P());
+        super(bedrockProxyConnection.channelInitializer, bedrockProxyConnection.getC2P());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class B23R0RustRakNetBedrockProxyConnection extends BedrockProxyConnectio
                     .channel(B23R0RustRakNetChannel.class)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
                     .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
-                    .handler(this.channelInitializerSupplier.apply(this.handlerSupplier));
+                    .handler(this.channelInitializer);
 
             this.channelFuture = bootstrap.register().syncUninterruptibly();
         } else {

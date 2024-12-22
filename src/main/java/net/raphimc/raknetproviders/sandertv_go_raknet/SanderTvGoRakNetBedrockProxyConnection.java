@@ -29,7 +29,7 @@ import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 public class SanderTvGoRakNetBedrockProxyConnection extends BedrockProxyConnection {
 
     public SanderTvGoRakNetBedrockProxyConnection(final SanderTvGoRakNetBedrockProxyConnection bedrockProxyConnection) {
-        super(bedrockProxyConnection.handlerSupplier, bedrockProxyConnection.channelInitializerSupplier, bedrockProxyConnection.getC2P());
+        super(bedrockProxyConnection.channelInitializer, bedrockProxyConnection.getC2P());
     }
 
     @Override
@@ -40,7 +40,7 @@ public class SanderTvGoRakNetBedrockProxyConnection extends BedrockProxyConnecti
                     .channel(SanderTvGoRakNetChannel.class)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
                     .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
-                    .handler(this.channelInitializerSupplier.apply(this.handlerSupplier));
+                    .handler(this.channelInitializer);
 
             this.channelFuture = bootstrap.register().syncUninterruptibly();
         } else {

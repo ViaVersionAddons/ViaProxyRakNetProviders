@@ -44,7 +44,7 @@ import java.util.List;
 public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyConnection {
 
     public RelativityMcNettyRakNetBedrockProxyConnection(final RelativityMcNettyRakNetBedrockProxyConnection bedrockProxyConnection) {
-        super(bedrockProxyConnection.handlerSupplier, bedrockProxyConnection.channelInitializerSupplier, bedrockProxyConnection.getC2P());
+        super(bedrockProxyConnection.channelInitializer, bedrockProxyConnection.getC2P());
     }
 
     @Override
@@ -61,8 +61,8 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
                         @Override
                         protected void initChannel(Channel channel) {
                             final RakNetClientThreadedChannel rakChannel = (RakNetClientThreadedChannel) channel;
-                            rakChannel.config().setprotocolVersions(new int[]{11});
-                            channel.pipeline().addLast(channelInitializerSupplier.apply(handlerSupplier));
+                            rakChannel.config().setprotocolVersions(new int[]{ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION});
+                            channel.pipeline().addLast(channelInitializer);
 
                             channel.pipeline().addBefore(VLPipeline.VIABEDROCK_FRAME_ENCAPSULATION_HANDLER_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<FrameData, RakMessage>() {
                                 @Override
