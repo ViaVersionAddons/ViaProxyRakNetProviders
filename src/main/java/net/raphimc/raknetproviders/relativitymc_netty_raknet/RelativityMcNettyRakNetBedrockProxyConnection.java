@@ -17,6 +17,7 @@
  */
 package net.raphimc.raknetproviders.relativitymc_netty_raknet;
 
+import com.viaversion.vialoader.netty.VLPipeline;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -26,7 +27,6 @@ import io.netty.handler.codec.MessageToMessageCodec;
 import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.ChannelType;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
-import net.raphimc.vialoader.netty.VLPipeline;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
