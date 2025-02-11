@@ -25,6 +25,7 @@ import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNet;
 import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNet;
 import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNetBedrockProxyConnection;
+import net.raphimc.raknetproviders.kastle_network.KastleNetworkBedrockProxyConnection;
 import net.raphimc.raknetproviders.relativitymc_netty_raknet.RelativityMcNettyRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.sandertv_go_raknet.SanderTvGoRakNet;
 import net.raphimc.raknetproviders.sandertv_go_raknet.SanderTvGoRakNetBedrockProxyConnection;
@@ -112,6 +113,9 @@ public class RakNetProviders extends ViaProxyPlugin {
                 }
                 case CLOUDBURSTMC_NETWORK -> {
                     // default implementation
+                }
+                case KASTLE_NETWORK -> {
+                    event.setProxySession(new KastleNetworkBedrockProxyConnection(Objects.cast(bedrockProxyConnection, KastleNetworkBedrockProxyConnection.class)));
                 }
                 case RELATIVITYMC_NETTY_RAKNET -> {
                     event.setProxySession(new RelativityMcNettyRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, RelativityMcNettyRakNetBedrockProxyConnection.class)));

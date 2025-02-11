@@ -47,6 +47,7 @@ dependencies {
         exclude group: "org.apache.logging.log4j"
         exclude group: "io.netty"
     }
+    include fileTree(include: ["*.jar"], dir: "dependencies")
 }
 
 processResources {

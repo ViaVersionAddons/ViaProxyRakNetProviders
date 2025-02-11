@@ -80,6 +80,7 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
                                 }
                             });
                         }
+
                     });
 
             this.channelFuture = bootstrap.register().syncUninterruptibly();
