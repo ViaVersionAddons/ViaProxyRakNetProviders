@@ -1,7 +1,7 @@
 plugins {
     id "java-library"
     id "idea"
-    id "net.lenni0451.repackager" version "1.0.0-SNAPSHOT"
+    id "net.lenni0451.repackager" version "1.0.0"
 }
 
 base {
