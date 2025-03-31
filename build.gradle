@@ -50,7 +50,7 @@ dependencies {
         exclude group: "org.apache.logging.log4j"
         exclude group: "io.netty"
     }
-    repackagedInclude("dev.kastle.netty:netty-transport-raknet:1.1.0") {
+    repackagedInclude("dev.kastle.netty:netty-transport-raknet:1.2.0") {
         transitive = false
     }
 }
