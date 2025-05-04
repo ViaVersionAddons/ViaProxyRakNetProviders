@@ -4,9 +4,9 @@ plugins {
 }
 
 configurations {
-    repackagedInclude
+    repackagedIncludeInJar
 
-    include.extendsFrom(repackagedInclude)
+    includeInJar.extendsFrom(repackagedIncludeInJar)
 }
 
 repositories {
@@ -26,21 +26,21 @@ dependencies {
         transitive = false
     }
 
-    include "net.java.dev.jna:jna:5.17.0"
+    includeInJar "net.java.dev.jna:jna:5.17.0"
 
     // For dependency sources, see RakNetBackend class
-    include "com.github.RelativityMC.netty-raknet:netty-raknet-client:ae1f415e05"
-    include("com.github.telecran-telecrit:JRakNet:d757e139ce") {
+    includeInJar "com.github.RelativityMC.netty-raknet:netty-raknet-client:ae1f415e05"
+    includeInJar("com.github.telecran-telecrit:JRakNet:d757e139ce") {
         exclude group: "org.apache.logging.log4j"
         exclude group: "io.netty"
     }
-    repackagedInclude("dev.kastle.netty:netty-transport-raknet:1.2.0") {
+    repackagedIncludeInJar("dev.kastle.netty:netty-transport-raknet:1.2.0") {
         transitive = false
     }
 }
 
 dependencyRepackager {
-    configuration = configurations.repackagedInclude
+    configuration = configurations.repackagedIncludeInJar
     relocations = [
             "org.cloudburstmc.netty": "dev.kastle.netty"
     ]
