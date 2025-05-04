@@ -22,7 +22,9 @@ repositories {
 }
 
 dependencies {
-    implementation "net.raphimc:ViaProxy:3.4.2-SNAPSHOT"
+    implementation("net.raphimc:ViaProxy:3.4.1") {
+        transitive = false
+    }
 
     include "net.java.dev.jna:jna:5.17.0"
 
