@@ -1,6 +1,6 @@
 plugins {
     id "viaproxy.plugin-conventions"
-    id "net.lenni0451.repackager" version "1.0.0"
+    id "net.lenni0451.repackager" version "1.0.1"
 }
 
 configurations {
