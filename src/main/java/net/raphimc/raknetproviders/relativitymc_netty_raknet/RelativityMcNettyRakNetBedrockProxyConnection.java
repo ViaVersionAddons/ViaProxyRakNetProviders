@@ -25,7 +25,8 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.MessageToMessageCodec;
 import net.raphimc.netminecraft.constants.ConnectionState;
-import net.raphimc.netminecraft.util.ChannelType;
+import net.raphimc.netminecraft.util.EventLoops;
+import net.raphimc.netminecraft.util.TransportType;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
@@ -48,10 +49,10 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
     }
 
     @Override
-    public void initialize(ChannelType channelType, Bootstrap bootstrap) {
+    public void initialize(TransportType transportType, Bootstrap bootstrap) {
         if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
             bootstrap
-                    .group(channelType.clientEventLoopGroup().get())
+                    .group(EventLoops.getClientEventLoop(transportType))
                     .channel(RakNetClient.THREADED_CHANNEL)
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
                     .option(RakNet.PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
@@ -85,7 +86,7 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
 
             this.channelFuture = bootstrap.register().syncUninterruptibly();
         } else {
-            super.initialize(channelType, bootstrap);
+            super.initialize(transportType, bootstrap);
         }
     }
 

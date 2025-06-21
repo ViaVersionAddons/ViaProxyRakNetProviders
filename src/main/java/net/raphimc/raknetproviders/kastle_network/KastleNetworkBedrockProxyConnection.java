@@ -32,7 +32,8 @@ import io.netty.channel.socket.DatagramChannel;
 import io.netty.handler.codec.MessageToMessageCodec;
 import net.lenni0451.reflect.stream.RStream;
 import net.raphimc.netminecraft.constants.ConnectionState;
-import net.raphimc.netminecraft.util.ChannelType;
+import net.raphimc.netminecraft.util.EventLoops;
+import net.raphimc.netminecraft.util.TransportType;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viabedrock.protocol.data.enums.bedrock.MinecraftPacketIds;
 import net.raphimc.viabedrock.protocol.types.BedrockTypes;
@@ -51,19 +52,19 @@ public class KastleNetworkBedrockProxyConnection extends BedrockProxyConnection 
     }
 
     @Override
-    public void initialize(ChannelType channelType, Bootstrap bootstrap) {
+    public void initialize(TransportType transportType, Bootstrap bootstrap) {
         if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
-            if (!DatagramChannel.class.isAssignableFrom(channelType.udpClientChannelClass())) {
-                throw new IllegalArgumentException("Channel type must be a DatagramChannel");
+            if (!DatagramChannel.class.isAssignableFrom(transportType.udpClientChannelClass())) {
+                throw new IllegalArgumentException("Transport type channel must be a DatagramChannel");
             }
-            if (channelType == ChannelType.KQUEUE) channelType = ChannelType.NIO; // KQueue doesn't work for Bedrock for some reason
-            final Class<? extends DatagramChannel> channelClass = (Class<? extends DatagramChannel>) channelType.udpClientChannelClass();
+            if (transportType == TransportType.KQUEUE) transportType = TransportType.NIO; // KQueue doesn't work for Bedrock for some reason
+            final Class<? extends DatagramChannel> channelClass = (Class<? extends DatagramChannel>) transportType.udpClientChannelClass();
 
             // Reflection to prevent inlining
             final int bedrockProtocolVersion = RStream.of(ProtocolConstants.class).fields().by("BEDROCK_PROTOCOL_VERSION").get();
 
             bootstrap
-                    .group(channelType.clientEventLoopGroup().get())
+                    .group(EventLoops.getClientEventLoop(transportType))
                     .channelFactory(RakChannelFactory.client(channelClass))
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
                     .option(RakChannelOption.RAK_PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
@@ -154,7 +155,7 @@ public class KastleNetworkBedrockProxyConnection extends BedrockProxyConnection 
             this.getChannel().config().setOption(RakChannelOption.RAK_MTU_SIZES, new Integer[]{1492, 1200, 576});
         }*/
         } else {
-            super.initialize(channelType, bootstrap);
+            super.initialize(transportType, bootstrap);
         }
     }
 
