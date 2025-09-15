@@ -35,7 +35,7 @@ import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.EventLoops;
 import net.raphimc.netminecraft.util.TransportType;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
-import net.raphimc.viabedrock.protocol.data.enums.bedrock.MinecraftPacketIds;
+import net.raphimc.viabedrock.protocol.data.enums.bedrock.generated.MinecraftPacketIds;
 import net.raphimc.viabedrock.protocol.types.BedrockTypes;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
