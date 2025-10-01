@@ -25,7 +25,7 @@ dependencies {
         transitive = false
     }
 
-    includeInJar "net.java.dev.jna:jna:5.18.0"
+    includeInJar "net.java.dev.jna:jna:5.18.1"
 
     // For dependency sources, see RakNetBackend class
     includeInJar "com.github.RelativityMC.netty-raknet:netty-raknet-client:ae1f415e05"
