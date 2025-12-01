@@ -15,39 +15,35 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.kastle_network;
+package net.raphimc.raknetproviders.cloudburst_network;
 
 import com.viaversion.vialoader.netty.VLPipeline;
-import dev.kastle.netty.channel.raknet.RakChannelFactory;
-import dev.kastle.netty.channel.raknet.RakPriority;
-import dev.kastle.netty.channel.raknet.RakReliability;
-import dev.kastle.netty.channel.raknet.config.RakChannelOption;
-import dev.kastle.netty.channel.raknet.packet.RakMessage;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.buffer.ByteBuf;
-import io.netty.buffer.ByteBufUtil;
-import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.handler.codec.MessageToMessageCodec;
-import net.lenni0451.reflect.stream.RStream;
 import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.EventLoops;
 import net.raphimc.netminecraft.util.TransportType;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
-import net.raphimc.viabedrock.protocol.data.enums.bedrock.generated.MinecraftPacketIds;
-import net.raphimc.viabedrock.protocol.types.BedrockTypes;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
+import org.cloudburstmc.upstream.netty.channel.raknet.RakChannelFactory;
+import org.cloudburstmc.upstream.netty.channel.raknet.RakPriority;
+import org.cloudburstmc.upstream.netty.channel.raknet.RakReliability;
+import org.cloudburstmc.upstream.netty.channel.raknet.config.RakChannelOption;
+import org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class KastleNetworkBedrockProxyConnection extends BedrockProxyConnection {
+public class CloudburstNetworkBedrockProxyConnection extends BedrockProxyConnection {
 
-    public KastleNetworkBedrockProxyConnection(final KastleNetworkBedrockProxyConnection bedrockProxyConnection) {
+    public CloudburstNetworkBedrockProxyConnection(final CloudburstNetworkBedrockProxyConnection bedrockProxyConnection) {
         super(bedrockProxyConnection.channelInitializer, bedrockProxyConnection.getC2P());
     }
 
@@ -60,15 +56,11 @@ public class KastleNetworkBedrockProxyConnection extends BedrockProxyConnection 
             if (transportType == TransportType.KQUEUE) transportType = TransportType.NIO; // KQueue doesn't work for Bedrock for some reason
             final Class<? extends DatagramChannel> channelClass = (Class<? extends DatagramChannel>) transportType.udpClientChannelClass();
 
-            // Reflection to prevent inlining
-            final int bedrockProtocolVersion = RStream.of(ProtocolConstants.class).fields().by("BEDROCK_PROTOCOL_VERSION").get();
-
             bootstrap
                     .group(EventLoops.getClientEventLoop(transportType))
                     .channelFactory(RakChannelFactory.client(channelClass))
                     .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
                     .option(RakChannelOption.RAK_PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
-                    .option(RakChannelOption.RAK_CLIENT_BEDROCK_PROTOCOL_VERSION, bedrockProtocolVersion)
                     .option(RakChannelOption.RAK_COMPATIBILITY_MODE, true)
                     .option(RakChannelOption.RAK_CLIENT_INTERNAL_ADDRESSES, 20)
                     .option(RakChannelOption.RAK_TIME_BETWEEN_SEND_CONNECTION_ATTEMPTS_MS, 500)
@@ -102,48 +94,6 @@ public class KastleNetworkBedrockProxyConnection extends BedrockProxyConnection 
                                             rakMessage.channel()
                                     ));
                                 }
-                            });
-                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_PACKET_ENCAPSULATION_HANDLER_NAME, "viaproxy-raknetproviders-packet-buffer", new ChannelDuplexHandler() {
-
-                                private boolean sentRequestNetworkSettings = false;
-                                private final List<byte[]> bufferedPackets = new ArrayList<>();
-
-                                @Override
-                                public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-                                    if (msg instanceof ByteBuf byteBuf && !this.sentRequestNetworkSettings) {
-                                        final byte[] data = ByteBufUtil.getBytes(byteBuf);
-                                        byteBuf.release();
-                                        this.bufferedPackets.add(data);
-                                        if (this.bufferedPackets.size() > 1000) {
-                                            throw new IllegalStateException("Too many packets buffered");
-                                        }
-                                    } else {
-                                        super.channelRead(ctx, msg);
-                                    }
-                                }
-
-                                @Override
-                                public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-                                    if (msg instanceof ByteBuf byteBuf) {
-                                        byteBuf.markReaderIndex();
-                                        final int packetId = BedrockTypes.UNSIGNED_VAR_INT.readPrimitive(byteBuf) & 1023;
-                                        byteBuf.resetReaderIndex();
-
-                                        if (packetId == MinecraftPacketIds.RequestNetworkSettings.getValue()) {
-                                            this.sentRequestNetworkSettings = true;
-                                            byteBuf.release();
-                                            for (byte[] bufferedPacket : this.bufferedPackets) {
-                                                ctx.fireChannelRead(Unpooled.wrappedBuffer(bufferedPacket));
-                                            }
-                                            ctx.pipeline().remove(this);
-                                        } else {
-                                            super.write(ctx, msg, promise);
-                                        }
-                                    } else {
-                                        super.write(ctx, msg, promise);
-                                    }
-                                }
-
                             });
                         }
 

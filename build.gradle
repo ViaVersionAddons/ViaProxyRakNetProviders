@@ -11,6 +11,22 @@ configurations {
 
 repositories {
     maven {
+        name = "OpenCollab Releases"
+        url = "https://repo.opencollab.dev/maven-releases"
+
+        content {
+            includeGroupByRegex "org\\.cloudburstmc(\\..+)?"
+        }
+    }
+    maven {
+        name = "OpenCollab Snapshots"
+        url = "https://repo.opencollab.dev/maven-snapshots"
+
+        content {
+            includeGroupByRegex "org\\.cloudburstmc(\\..+)?"
+        }
+    }
+    maven {
         name = "Jitpack"
         url = "https://jitpack.io"
 
@@ -33,7 +49,7 @@ dependencies {
         exclude group: "org.apache.logging.log4j"
         exclude group: "io.netty"
     }
-    repackagedIncludeInJar("dev.kastle.netty:netty-transport-raknet:1.3.0") {
+    repackagedIncludeInJar("org.cloudburstmc.netty:netty-transport-raknet:1.0.0.CR3-20251031.125212-22") {
         transitive = false
     }
 }
@@ -41,7 +57,7 @@ dependencies {
 dependencyRepackager {
     configuration = configurations.repackagedIncludeInJar
     relocations = [
-            "org.cloudburstmc.netty": "dev.kastle.netty"
+            "org.cloudburstmc.netty": "org.cloudburstmc.upstream.netty"
     ]
     removeEmptyDirs = true
 }
