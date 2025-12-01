@@ -19,13 +19,13 @@ package net.raphimc.raknetproviders;
 
 public enum RakNetBackend {
 
-    SANDERTV_GO_RAKNET("[Go] Sandertv/go-raknet"), // https://github.com/Sandertv/go-raknet
+    KASTLE_NETWORK("[Java] Kas-tle/Network (default)"), // https://github.com/Kas-tle/NetworkCompatible
     EXTREMEHEAT_FB_RAKNET("[C++] extremeheat/fb-raknet"), // https://github.com/extremeheat/fb-raknet
     CLOUDBURSTMC_NETWORK("[Java] CloudburstMC/Network"), // https://github.com/CloudburstMC/Network
-    KASTLE_NETWORK("[Java] Kas-tle/Network (default)"), // https://github.com/Kas-tle/NetworkCompatible
+    SANDERTV_GO_RAKNET("[Go] Sandertv/go-raknet"), // https://github.com/Sandertv/go-raknet
     RELATIVITYMC_NETTY_RAKNET("[Java] RelativityMC/netty-raknet"), // https://github.com/RelativityMC/netty-raknet
-    WHIRVIS_JRAKNET("[Java] whirvis/JRakNet (bad)"), // https://github.com/telecran-telecrit/JRakNet
     B23R0_RUST_RAKNET("[Rust] b23r0/rust-raknet"), // https://github.com/b23r0/rust-raknet
+    WHIRVIS_JRAKNET("[Java] whirvis/JRakNet (bad)"), // https://github.com/telecran-telecrit/JRakNet
     ;
 
     private final String displayName;

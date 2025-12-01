@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders.cloudburst_network;
+package net.raphimc.raknetproviders.cloudburstmc_network;
 
 import com.viaversion.vialoader.netty.VLPipeline;
 import io.netty.bootstrap.Bootstrap;
@@ -32,18 +32,18 @@ import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
 import net.raphimc.viaproxy.proxy.session.ProxyConnection;
+import org.cloudburstmc.netty.channel.raknet.RakPriority;
+import org.cloudburstmc.netty.channel.raknet.RakReliability;
+import org.cloudburstmc.netty.channel.raknet.packet.RakMessage;
 import org.cloudburstmc.upstream.netty.channel.raknet.RakChannelFactory;
-import org.cloudburstmc.upstream.netty.channel.raknet.RakPriority;
-import org.cloudburstmc.upstream.netty.channel.raknet.RakReliability;
 import org.cloudburstmc.upstream.netty.channel.raknet.config.RakChannelOption;
-import org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage;
 
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class CloudburstNetworkBedrockProxyConnection extends BedrockProxyConnection {
+public class CloudburstMcNetworkBedrockProxyConnection extends BedrockProxyConnection {
 
-    public CloudburstNetworkBedrockProxyConnection(final CloudburstNetworkBedrockProxyConnection bedrockProxyConnection) {
+    public CloudburstMcNetworkBedrockProxyConnection(final CloudburstMcNetworkBedrockProxyConnection bedrockProxyConnection) {
         super(bedrockProxyConnection.channelInitializer, bedrockProxyConnection.getC2P());
     }
 
@@ -74,23 +74,23 @@ public class CloudburstNetworkBedrockProxyConnection extends BedrockProxyConnect
                         protected void initChannel(Channel channel) {
                             channel.pipeline().addLast(channelInitializer);
 
-                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_FRAME_ENCAPSULATION_HANDLER_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<RakMessage, org.cloudburstmc.netty.channel.raknet.packet.RakMessage>() {
+                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_FRAME_ENCAPSULATION_HANDLER_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage, RakMessage>() {
                                 @Override
-                                protected void encode(ChannelHandlerContext channelHandlerContext, org.cloudburstmc.netty.channel.raknet.packet.RakMessage rakMessage, List<Object> list) {
-                                    list.add(new RakMessage(
+                                protected void encode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
+                                    list.add(new org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage(
                                             rakMessage.content().retain(),
-                                            RakReliability.valueOf(rakMessage.reliability().name()),
-                                            RakPriority.valueOf(rakMessage.priority().name()),
+                                            org.cloudburstmc.upstream.netty.channel.raknet.RakReliability.valueOf(rakMessage.reliability().name()),
+                                            org.cloudburstmc.upstream.netty.channel.raknet.RakPriority.valueOf(rakMessage.priority().name()),
                                             rakMessage.channel()
                                     ));
                                 }
 
                                 @Override
-                                protected void decode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
-                                    list.add(new org.cloudburstmc.netty.channel.raknet.packet.RakMessage(
+                                protected void decode(ChannelHandlerContext channelHandlerContext, org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage rakMessage, List<Object> list) {
+                                    list.add(new RakMessage(
                                             rakMessage.content().retain(),
-                                            org.cloudburstmc.netty.channel.raknet.RakReliability.valueOf(rakMessage.reliability().name()),
-                                            org.cloudburstmc.netty.channel.raknet.RakPriority.valueOf(rakMessage.priority().name()),
+                                            RakReliability.valueOf(rakMessage.reliability().name()),
+                                            RakPriority.valueOf(rakMessage.priority().name()),
                                             rakMessage.channel()
                                     ));
                                 }

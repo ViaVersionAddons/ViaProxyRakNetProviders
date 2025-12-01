@@ -23,7 +23,7 @@ import net.lenni0451.reflect.Objects;
 import net.lenni0451.reflect.stream.RStream;
 import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNet;
 import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNetBedrockProxyConnection;
-import net.raphimc.raknetproviders.cloudburst_network.CloudburstNetworkBedrockProxyConnection;
+import net.raphimc.raknetproviders.cloudburstmc_network.CloudburstMcNetworkBedrockProxyConnection;
 import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNet;
 import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.relativitymc_netty_raknet.RelativityMcNettyRakNetBedrockProxyConnection;
@@ -104,6 +104,9 @@ public class RakNetProviders extends ViaProxyPlugin {
     public void onProxySessionCreation(final ProxySessionCreationEvent event) {
         if (event.getProxySession() instanceof BedrockProxyConnection bedrockProxyConnection && this.rakNetBackend.getSelectedItem() instanceof RakNetBackend backend) {
             switch (backend) {
+                case KASTLE_NETWORK -> {
+                    // default implementation
+                }
                 case EXTREMEHEAT_FB_RAKNET -> {
                     if (ExtremeheatFbRakNet.isLoaded()) {
                         event.setProxySession(new ExtremeheatFbRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, ExtremeheatFbRakNetBedrockProxyConnection.class)));
@@ -111,17 +114,8 @@ public class RakNetProviders extends ViaProxyPlugin {
                         Logger.LOGGER.warn("EXTREMEHEAT_FB_RAKNET is not supported on this system, falling back to KASTLE_NETWORK");
                     }
                 }
-                case KASTLE_NETWORK -> {
-                    // default implementation
-                }
                 case CLOUDBURSTMC_NETWORK -> {
-                    event.setProxySession(new CloudburstNetworkBedrockProxyConnection(Objects.cast(bedrockProxyConnection, CloudburstNetworkBedrockProxyConnection.class)));
-                }
-                case RELATIVITYMC_NETTY_RAKNET -> {
-                    event.setProxySession(new RelativityMcNettyRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, RelativityMcNettyRakNetBedrockProxyConnection.class)));
-                }
-                case WHIRVIS_JRAKNET -> {
-                    event.setProxySession(new WhirvisJRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, WhirvisJRakNetBedrockProxyConnection.class)));
+                    event.setProxySession(new CloudburstMcNetworkBedrockProxyConnection(Objects.cast(bedrockProxyConnection, CloudburstMcNetworkBedrockProxyConnection.class)));
                 }
                 case SANDERTV_GO_RAKNET -> {
                     if (SanderTvGoRakNet.isLoaded()) {
@@ -130,12 +124,18 @@ public class RakNetProviders extends ViaProxyPlugin {
                         Logger.LOGGER.warn("SANDERTV_GO_RAKNET is not supported on this system, falling back to KASTLE_NETWORK");
                     }
                 }
+                case RELATIVITYMC_NETTY_RAKNET -> {
+                    event.setProxySession(new RelativityMcNettyRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, RelativityMcNettyRakNetBedrockProxyConnection.class)));
+                }
                 case B23R0_RUST_RAKNET -> {
                     if (B23R0RustRakNet.isLoaded()) {
                         event.setProxySession(new B23R0RustRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, B23R0RustRakNetBedrockProxyConnection.class)));
                     } else {
                         Logger.LOGGER.warn("B23R0_RUST_RAKNET is not supported on this system, falling back to KASTLE_NETWORK");
                     }
+                }
+                case WHIRVIS_JRAKNET -> {
+                    event.setProxySession(new WhirvisJRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, WhirvisJRakNetBedrockProxyConnection.class)));
                 }
             }
         }
