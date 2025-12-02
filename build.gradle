@@ -49,7 +49,7 @@ dependencies {
         exclude group: "org.apache.logging.log4j"
         exclude group: "io.netty"
     }
-    repackagedIncludeInJar("org.cloudburstmc.netty:netty-transport-raknet:1.0.0.CR3-20251031.125212-22") {
+    repackagedIncludeInJar("org.cloudburstmc.netty:netty-transport-raknet:4.1.51.Final") {
         transitive = false
     }
 }
