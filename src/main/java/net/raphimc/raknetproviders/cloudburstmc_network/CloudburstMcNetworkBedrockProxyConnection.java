@@ -74,7 +74,7 @@ public class CloudburstMcNetworkBedrockProxyConnection extends BedrockProxyConne
                         protected void initChannel(Channel channel) {
                             channel.pipeline().addLast(channelInitializer);
 
-                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_FRAME_ENCAPSULATION_HANDLER_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage, RakMessage>() {
+                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_RAKNET_MESSAGE_CODEC_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage, RakMessage>() {
                                 @Override
                                 protected void encode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
                                     list.add(new org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage(

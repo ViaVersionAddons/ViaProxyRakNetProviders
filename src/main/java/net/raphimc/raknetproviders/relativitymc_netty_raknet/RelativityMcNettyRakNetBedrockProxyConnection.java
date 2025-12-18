@@ -65,7 +65,7 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
                             rakChannel.config().setprotocolVersions(new int[]{ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION});
                             channel.pipeline().addLast(channelInitializer);
 
-                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_FRAME_ENCAPSULATION_HANDLER_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<FrameData, RakMessage>() {
+                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_RAKNET_MESSAGE_CODEC_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<FrameData, RakMessage>() {
                                 @Override
                                 protected void encode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
                                     final FrameData frameData = FrameData.read(rakMessage.content(), rakMessage.content().readableBytes(), false);
