@@ -17,20 +17,16 @@
  */
 package net.raphimc.raknetproviders.relativitymc_netty_raknet;
 
-import com.viaversion.vialoader.netty.VLPipeline;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.handler.codec.MessageToMessageCodec;
-import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.EventLoops;
 import net.raphimc.netminecraft.util.TransportType;
+import net.raphimc.viabedrock.netty.raknet.MessageCodec;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
-import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
-import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 import network.ycc.raknet.RakNet;
 import network.ycc.raknet.client.RakNetClient;
 import network.ycc.raknet.client.channel.RakNetClientThreadedChannel;
@@ -49,45 +45,37 @@ public class RelativityMcNettyRakNetBedrockProxyConnection extends BedrockProxyC
     }
 
     @Override
-    public void initialize(TransportType transportType, Bootstrap bootstrap) {
-        if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
-            bootstrap
-                    .group(EventLoops.getClientEventLoop(transportType))
-                    .channel(RakNetClient.THREADED_CHANNEL)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
-                    .option(RakNet.PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
-                    .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
-                    .handler(new ChannelInitializer<>() {
+    public void initializeRakNet(TransportType transportType, Bootstrap bootstrap) {
+        bootstrap
+                .group(EventLoops.getClientEventLoop(transportType))
+                .channel(RakNetClient.THREADED_CHANNEL)
+                .option(RakNet.PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
+                .handler(new ChannelInitializer<>() {
 
-                        @Override
-                        protected void initChannel(Channel channel) {
-                            final RakNetClientThreadedChannel rakChannel = (RakNetClientThreadedChannel) channel;
-                            rakChannel.config().setprotocolVersions(new int[]{ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION});
-                            channel.pipeline().addLast(channelInitializer);
+                    @Override
+                    protected void initChannel(Channel channel) {
+                        final RakNetClientThreadedChannel rakChannel = (RakNetClientThreadedChannel) channel;
+                        rakChannel.config().setprotocolVersions(new int[]{ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION});
+                        channel.pipeline().addLast(channelInitializer);
 
-                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_RAKNET_MESSAGE_CODEC_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<FrameData, RakMessage>() {
-                                @Override
-                                protected void encode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
-                                    final FrameData frameData = FrameData.read(rakMessage.content(), rakMessage.content().readableBytes(), false);
-                                    frameData.setReliability(FramedPacket.Reliability.get(rakMessage.reliability().ordinal()));
-                                    frameData.setOrderChannel(rakMessage.channel());
-                                    list.add(frameData);
-                                }
+                        channel.pipeline().addBefore(MessageCodec.NAME, "viabedrock-frame-converter", new MessageToMessageCodec<FrameData, RakMessage>() {
+                            @Override
+                            protected void encode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
+                                final FrameData frameData = FrameData.read(rakMessage.content(), rakMessage.content().readableBytes(), false);
+                                frameData.setReliability(FramedPacket.Reliability.get(rakMessage.reliability().ordinal()));
+                                frameData.setOrderChannel(rakMessage.channel());
+                                list.add(frameData);
+                            }
 
-                                @Override
-                                protected void decode(ChannelHandlerContext channelHandlerContext, FrameData frameData, List<Object> list) {
-                                    final RakReliability reliability = RakReliability.fromId(frameData.getReliability().ordinal());
-                                    list.add(new RakMessage(frameData.createData(), reliability, RakPriority.NORMAL, frameData.getOrderChannel()));
-                                }
-                            });
-                        }
+                            @Override
+                            protected void decode(ChannelHandlerContext channelHandlerContext, FrameData frameData, List<Object> list) {
+                                final RakReliability reliability = RakReliability.fromId(frameData.getReliability().ordinal());
+                                list.add(new RakMessage(frameData.createData(), reliability, RakPriority.NORMAL, frameData.getOrderChannel()));
+                            }
+                        });
+                    }
 
-                    });
-
-            this.channelFuture = bootstrap.register().syncUninterruptibly();
-        } else {
-            super.initialize(transportType, bootstrap);
-        }
+                });
     }
 
 }

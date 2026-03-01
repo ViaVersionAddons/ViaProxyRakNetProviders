@@ -18,13 +18,9 @@
 package net.raphimc.raknetproviders.extremeheat_fb_raknet;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.oio.OioEventLoopGroup;
-import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.TransportType;
-import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
-import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 
 public class ExtremeheatFbRakNetBedrockProxyConnection extends BedrockProxyConnection {
 
@@ -33,19 +29,8 @@ public class ExtremeheatFbRakNetBedrockProxyConnection extends BedrockProxyConne
     }
 
     @Override
-    public void initialize(TransportType transportType, Bootstrap bootstrap) {
-        if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
-            bootstrap
-                    .group(new OioEventLoopGroup())
-                    .channel(ExtremeheatFbRakNetChannel.class)
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
-                    .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
-                    .handler(this.channelInitializer);
-
-            this.channelFuture = bootstrap.register().syncUninterruptibly();
-        } else {
-            super.initialize(transportType, bootstrap);
-        }
+    public void initializeRakNet(TransportType transportType, Bootstrap bootstrap) {
+        bootstrap.group(new OioEventLoopGroup()).channel(ExtremeheatFbRakNetChannel.class);
     }
 
 }

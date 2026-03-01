@@ -17,21 +17,18 @@
  */
 package net.raphimc.raknetproviders.cloudburstmc_network;
 
-import com.viaversion.vialoader.netty.VLPipeline;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.socket.DatagramChannel;
 import io.netty.handler.codec.MessageToMessageCodec;
-import net.raphimc.netminecraft.constants.ConnectionState;
 import net.raphimc.netminecraft.util.EventLoops;
 import net.raphimc.netminecraft.util.TransportType;
+import net.raphimc.viabedrock.netty.raknet.MessageCodec;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.proxy.session.BedrockProxyConnection;
-import net.raphimc.viaproxy.proxy.session.ProxyConnection;
 import org.cloudburstmc.netty.channel.raknet.RakPriority;
 import org.cloudburstmc.netty.channel.raknet.RakReliability;
 import org.cloudburstmc.netty.channel.raknet.packet.RakMessage;
@@ -48,65 +45,55 @@ public class CloudburstMcNetworkBedrockProxyConnection extends BedrockProxyConne
     }
 
     @Override
-    public void initialize(TransportType transportType, Bootstrap bootstrap) {
-        if (this.getC2pConnectionState() == ConnectionState.LOGIN) {
-            if (!DatagramChannel.class.isAssignableFrom(transportType.udpClientChannelClass())) {
-                throw new IllegalArgumentException("Transport type channel must be a DatagramChannel");
-            }
-            if (transportType == TransportType.KQUEUE) transportType = TransportType.NIO; // KQueue doesn't work for Bedrock for some reason
-            final Class<? extends DatagramChannel> channelClass = (Class<? extends DatagramChannel>) transportType.udpClientChannelClass();
-
-            bootstrap
-                    .group(EventLoops.getClientEventLoop(transportType))
-                    .channelFactory(RakChannelFactory.client(channelClass))
-                    .option(ChannelOption.CONNECT_TIMEOUT_MILLIS, ViaProxy.getConfig().getConnectTimeout())
-                    .option(RakChannelOption.RAK_PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
-                    .option(RakChannelOption.RAK_COMPATIBILITY_MODE, true)
-                    .option(RakChannelOption.RAK_CLIENT_INTERNAL_ADDRESSES, 20)
-                    .option(RakChannelOption.RAK_TIME_BETWEEN_SEND_CONNECTION_ATTEMPTS_MS, 500)
-                    .option(RakChannelOption.RAK_CONNECT_TIMEOUT, (long) ViaProxy.getConfig().getConnectTimeout())
-                    .option(RakChannelOption.RAK_SESSION_TIMEOUT, 30_000L)
-                    .option(RakChannelOption.RAK_GUID, ThreadLocalRandom.current().nextLong())
-                    .attr(ProxyConnection.PROXY_CONNECTION_ATTRIBUTE_KEY, this)
-                    .handler(new ChannelInitializer<>() {
-
-                        @Override
-                        protected void initChannel(Channel channel) {
-                            channel.pipeline().addLast(channelInitializer);
-
-                            channel.pipeline().addBefore(VLPipeline.VIABEDROCK_RAKNET_MESSAGE_CODEC_NAME, "viabedrock-frame-converter", new MessageToMessageCodec<org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage, RakMessage>() {
-                                @Override
-                                protected void encode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
-                                    list.add(new org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage(
-                                            rakMessage.content().retain(),
-                                            org.cloudburstmc.upstream.netty.channel.raknet.RakReliability.valueOf(rakMessage.reliability().name()),
-                                            org.cloudburstmc.upstream.netty.channel.raknet.RakPriority.valueOf(rakMessage.priority().name()),
-                                            rakMessage.channel()
-                                    ));
-                                }
-
-                                @Override
-                                protected void decode(ChannelHandlerContext channelHandlerContext, org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage rakMessage, List<Object> list) {
-                                    list.add(new RakMessage(
-                                            rakMessage.content().retain(),
-                                            RakReliability.valueOf(rakMessage.reliability().name()),
-                                            RakPriority.valueOf(rakMessage.priority().name()),
-                                            rakMessage.channel()
-                                    ));
-                                }
-                            });
-                        }
-
-                    });
-
-            this.channelFuture = bootstrap.register().syncUninterruptibly();
-
-        /*if (this.getChannel().config().setOption(RakChannelOption.RAK_IP_DONT_FRAGMENT, true)) {
-            this.getChannel().config().setOption(RakChannelOption.RAK_MTU_SIZES, new Integer[]{1492, 1200, 576});
-        }*/
-        } else {
-            super.initialize(transportType, bootstrap);
+    public void initializeRakNet(TransportType transportType, Bootstrap bootstrap) {
+        if (!DatagramChannel.class.isAssignableFrom(transportType.udpClientChannelClass())) {
+            throw new IllegalArgumentException("Channel type must be a DatagramChannel");
         }
+        if (transportType == TransportType.KQUEUE) {
+            transportType = TransportType.NIO; // KQueue doesn't work due to requiring the channel to be bound instead of connected
+        }
+        final Class<? extends DatagramChannel> channelClass = (Class<? extends DatagramChannel>) transportType.udpClientChannelClass();
+
+        bootstrap
+                .group(EventLoops.getClientEventLoop(transportType))
+                .channelFactory(RakChannelFactory.client(channelClass))
+                .option(RakChannelOption.RAK_PROTOCOL_VERSION, ProtocolConstants.BEDROCK_RAKNET_PROTOCOL_VERSION)
+                .option(RakChannelOption.RAK_COMPATIBILITY_MODE, true)
+                .option(RakChannelOption.RAK_CLIENT_INTERNAL_ADDRESSES, 20)
+                .option(RakChannelOption.RAK_TIME_BETWEEN_SEND_CONNECTION_ATTEMPTS_MS, 500)
+                .option(RakChannelOption.RAK_CONNECT_TIMEOUT, (long) ViaProxy.getConfig().getConnectTimeout())
+                .option(RakChannelOption.RAK_SESSION_TIMEOUT, 30_000L)
+                .option(RakChannelOption.RAK_GUID, ThreadLocalRandom.current().nextLong())
+                .handler(new ChannelInitializer<>() {
+
+                    @Override
+                    protected void initChannel(Channel channel) {
+                        channel.pipeline().addLast(channelInitializer);
+
+                        channel.pipeline().addBefore(MessageCodec.NAME, "viabedrock-frame-converter", new MessageToMessageCodec<org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage, RakMessage>() {
+                            @Override
+                            protected void encode(ChannelHandlerContext channelHandlerContext, RakMessage rakMessage, List<Object> list) {
+                                list.add(new org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage(
+                                        rakMessage.content().retain(),
+                                        org.cloudburstmc.upstream.netty.channel.raknet.RakReliability.valueOf(rakMessage.reliability().name()),
+                                        org.cloudburstmc.upstream.netty.channel.raknet.RakPriority.valueOf(rakMessage.priority().name()),
+                                        rakMessage.channel()
+                                ));
+                            }
+
+                            @Override
+                            protected void decode(ChannelHandlerContext channelHandlerContext, org.cloudburstmc.upstream.netty.channel.raknet.packet.RakMessage rakMessage, List<Object> list) {
+                                list.add(new RakMessage(
+                                        rakMessage.content().retain(),
+                                        RakReliability.valueOf(rakMessage.reliability().name()),
+                                        RakPriority.valueOf(rakMessage.priority().name()),
+                                        rakMessage.channel()
+                                ));
+                            }
+                        });
+                    }
+
+                });
     }
 
 }
