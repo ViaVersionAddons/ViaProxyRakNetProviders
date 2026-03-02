@@ -37,7 +37,7 @@ repositories {
 }
 
 dependencies {
-    implementation("net.raphimc:ViaProxy:3.4.9-SNAPSHOT") {
+    implementation("net.raphimc:ViaProxy:3.4.10-SNAPSHOT") {
         transitive = false
     }
 
