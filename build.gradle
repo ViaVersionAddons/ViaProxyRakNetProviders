@@ -1,6 +1,6 @@
 plugins {
     id "viaproxy.plugin-conventions"
-    id "net.lenni0451.repackager" version "1.0.2"
+    id "net.lenni0451.jar-transformer" version "1.1.0"
 }
 
 configurations {
@@ -54,10 +54,14 @@ dependencies {
     }
 }
 
-dependencyRepackager {
-    configuration = configurations.repackagedIncludeInJar
-    relocations = [
-            "org.cloudburstmc.netty": "org.cloudburstmc.upstream.netty"
-    ]
-    removeEmptyDirs = true
+jarTransformer {
+    dependency {
+        configuration = configurations.repackagedIncludeInJar
+        repackage {
+            relocations = [
+                    "org.cloudburstmc.netty": "org.cloudburstmc.upstream.netty"
+            ]
+            removeEmptyDirs = true
+        }
+    }
 }
