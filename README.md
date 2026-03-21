@@ -14,4 +14,4 @@ Source code for the wrapper natives can be found here: https://github.com/Lenni0
 If you encounter any issues, please report them on the
 [issue tracker](https://github.com/ViaVersionAddons/ViaProxyRakNetProviders/issues).  
 If you just want to talk or need help using ViaProxyRakNetProviders feel free to join my
-[Discord](https://discord.gg/dCzT9XHEWu).
+[Discord](https://raphimc.net/discord).
