@@ -15,7 +15,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-package net.raphimc.raknetproviders;
+package net.raphimc.raknetproviders.util;
 
 import io.netty.channel.ChannelConfig;
 import io.netty.channel.ChannelMetadata;
@@ -32,14 +32,14 @@ public abstract class SimpleOioMessageChannel extends AbstractOioMessageChannel 
     private SocketAddress remoteAddress;
     private SocketAddress localAddress;
 
-    protected boolean open = true;
+    private boolean open = true;
 
     protected SimpleOioMessageChannel() {
         super(null);
     }
 
     @Override
-    protected void doConnect(SocketAddress remoteAddress, SocketAddress localAddress) throws Exception {
+    protected void doConnect(final SocketAddress remoteAddress, final SocketAddress localAddress) throws Exception {
         this.remoteAddress = remoteAddress;
         this.localAddress = localAddress;
     }
@@ -55,8 +55,8 @@ public abstract class SimpleOioMessageChannel extends AbstractOioMessageChannel 
     }
 
     @Override
-    protected void doBind(SocketAddress localAddress) {
-        throw new UnsupportedOperationException();
+    protected void doBind(final SocketAddress localAddress) throws Exception {
+        this.localAddress = localAddress;
     }
 
     @Override

@@ -21,15 +21,12 @@ import net.lenni0451.commons.swing.GBC;
 import net.lenni0451.lambdaevents.EventHandler;
 import net.lenni0451.reflect.Objects;
 import net.lenni0451.reflect.stream.RStream;
-import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNet;
-import net.raphimc.raknetproviders.b23r0_rust_raknet.B23R0RustRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.cloudburstmc_network.CloudburstMcNetworkBedrockProxyConnection;
 import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNet;
 import net.raphimc.raknetproviders.extremeheat_fb_raknet.ExtremeheatFbRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.relativitymc_netty_raknet.RelativityMcNettyRakNetBedrockProxyConnection;
 import net.raphimc.raknetproviders.sandertv_go_raknet.SanderTvGoRakNet;
 import net.raphimc.raknetproviders.sandertv_go_raknet.SanderTvGoRakNetBedrockProxyConnection;
-import net.raphimc.raknetproviders.whirvis_jraknet.WhirvisJRakNetBedrockProxyConnection;
 import net.raphimc.viabedrock.protocol.data.ProtocolConstants;
 import net.raphimc.viaproxy.ViaProxy;
 import net.raphimc.viaproxy.plugins.ViaProxyPlugin;
@@ -126,16 +123,6 @@ public class RakNetProviders extends ViaProxyPlugin {
                 }
                 case RELATIVITYMC_NETTY_RAKNET -> {
                     event.setProxySession(new RelativityMcNettyRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, RelativityMcNettyRakNetBedrockProxyConnection.class)));
-                }
-                case B23R0_RUST_RAKNET -> {
-                    if (B23R0RustRakNet.isLoaded()) {
-                        event.setProxySession(new B23R0RustRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, B23R0RustRakNetBedrockProxyConnection.class)));
-                    } else {
-                        Logger.LOGGER.warn("B23R0_RUST_RAKNET is not supported on this system, falling back to KASTLE_NETWORK");
-                    }
-                }
-                case WHIRVIS_JRAKNET -> {
-                    event.setProxySession(new WhirvisJRakNetBedrockProxyConnection(Objects.cast(bedrockProxyConnection, WhirvisJRakNetBedrockProxyConnection.class)));
                 }
             }
         }

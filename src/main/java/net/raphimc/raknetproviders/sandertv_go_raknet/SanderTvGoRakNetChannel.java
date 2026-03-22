@@ -23,7 +23,7 @@ import com.sun.jna.ptr.PointerByReference;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.util.internal.StringUtil;
-import net.raphimc.raknetproviders.SimpleOioMessageChannel;
+import net.raphimc.raknetproviders.util.SimpleOioMessageChannel;
 import org.cloudburstmc.netty.channel.raknet.packet.RakMessage;
 
 import java.net.ConnectException;
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class SanderTvGoRakNetChannel extends SimpleOioMessageChannel {
 
-    protected boolean active = false;
+    private boolean active = false;
 
     private Pointer connection;
 
@@ -111,7 +111,7 @@ public class SanderTvGoRakNetChannel extends SimpleOioMessageChannel {
 
     @Override
     public boolean isActive() {
-        return this.active && this.open;
+        return this.isOpen() && this.active;
     }
 
 }

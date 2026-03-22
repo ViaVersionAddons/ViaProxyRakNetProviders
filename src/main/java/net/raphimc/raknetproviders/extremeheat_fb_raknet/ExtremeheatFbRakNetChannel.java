@@ -22,7 +22,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelOutboundBuffer;
 import io.netty.channel.ConnectTimeoutException;
 import io.netty.util.internal.StringUtil;
-import net.raphimc.raknetproviders.SimpleOioMessageChannel;
+import net.raphimc.raknetproviders.util.SimpleOioMessageChannel;
 import org.cloudburstmc.netty.channel.raknet.RakConstants;
 import org.cloudburstmc.netty.channel.raknet.packet.RakMessage;
 
@@ -33,7 +33,7 @@ import java.util.List;
 
 public class ExtremeheatFbRakNetChannel extends SimpleOioMessageChannel {
 
-    protected boolean active = false;
+    private boolean active = false;
 
     private Pointer rakPeer;
 
@@ -129,7 +129,7 @@ public class ExtremeheatFbRakNetChannel extends SimpleOioMessageChannel {
 
     @Override
     public boolean isActive() {
-        return this.active && this.open;
+        return this.isOpen() && this.active;
     }
 
 }
